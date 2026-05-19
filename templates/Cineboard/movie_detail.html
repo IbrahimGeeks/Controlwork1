@@ -1,0 +1,40 @@
+<hr>
+<h3>Забронировать VIP-место</h3>
+{% if request.user.is_authenticated %}
+    {% if request.GET.error == 'already_booked' %}
+        <p style="color: red;">Ошибка: Вы можете забронировать только ОДНО VIP-место в системе!</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_content %}
+        {{ booking_form.as_p }}
+        <button type="submit" name="submit_booking">Забронировать место</button>
+    </form>
+{% else %}
+    <p><a href="{% url 'login' %}">Войдите</a>, чтобы забронировать VIP-место.</p>
+{% endif %}
+
+<hr>
+
+<h3>Комментарии ({{ comments.count }})</h3>
+
+{% if request.user.is_authenticated %}
+    <form method="POST" style="margin-bottom: 20px;">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit" name="submit_comment">Отправить комментарий</button>
+    </form>
+{% else %}
+    <p>Только авторизованные пользователи могут оставлять комментарии. <a href="{% url 'login' %}">Войдите в аккаунт</a>.</p>
+{% endif %}
+
+<div class="comments-list">
+    {% for comment in comments %}
+        <div class="comment-item" style="border-bottom: 1px solid #ccc; padding: 10px 0;">
+            <strong>{{ comment.user.username }}</strong> <small style="color: gray;">({{ comment.created_at|date:"d.m.Y H:i" }})</small>
+            <p>{{ comment.text }}</p>
+        </div>
+    {% empty %}
+        <p>Комментариев пока нет. Станьте первым!</p>
+    {% endfor %}
+</div>

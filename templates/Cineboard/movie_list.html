@@ -1,0 +1,11 @@
+<form method="GET" action="{% url 'movie_list' %}">
+    <input type="text" name="q" placeholder="Поиск фильма по названию..." value="{{ request.GET.q }}">
+    <button type="submit">Найти</button>
+</form>
+
+{% for movie in movies %}
+    <h3><a href="{% url 'movie_detail' movie.pk %}">{{ movie.title }}</a></h3>
+    <p>{{ movie.description|truncatewords:20 }}</p>
+{% empty %}
+    <p>Фильмы не найдены.</p>
+{% endfor %}
